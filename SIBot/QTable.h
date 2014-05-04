@@ -15,7 +15,7 @@ public:
 	double maxStateValue(int i);
 	int getColumns();
 	int getRows();
-	void updateTable(int i, int j, int r);
+	void updateTable(int i, int j, double r);
 
 private:
 	void initializeTable();

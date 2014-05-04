@@ -123,7 +123,7 @@ int QTable::getRows()
 	return m_matrix.rows();
 }
 
-void QTable::updateTable(int i, int j, int r)
+void QTable::updateTable(int i, int j, double r)
 {
-	m_matrix(i,j) += r;
+	m_matrix(i,j) = r;
 }

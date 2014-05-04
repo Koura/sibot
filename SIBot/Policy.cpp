@@ -3,7 +3,7 @@
 Policy::Policy()
 {
 	k = 1;
-	epsilon = 0.9;
+	epsilon = 0.1;
 }
 
 Policy::~Policy()

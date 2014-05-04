@@ -53,7 +53,7 @@ void SIBot::onFrame()
 	if (Broodwar->isReplay()) return;
 	for(std::set<Unit*>::iterator it = m_heroes.begin(); it!=m_heroes.end(); ++it)
 	{
-		if(!(*it)->isAttackFrame() && !(*it)->isMoving())
+		if(readyForAction(*it))
 		{
 			int previousEnemyHP = m_stateMaster->getEnemyHP();
 			int previousAlliedHP = m_stateMaster->getAlliedHP();
@@ -62,7 +62,7 @@ void SIBot::onFrame()
 			if(m_stateMaster->getPrevious()!= -1)
 			{
 				updateAlliedHealth();
-				rewardAgent(previousEnemyHP, previousAlliedHP);
+				rewardAgentByQ(previousEnemyHP, previousAlliedHP, currentState);
 			}
 			else
 			{
@@ -126,10 +126,14 @@ void SIBot::onSendText(std::string text)
 	Broodwar->sendText("%s", text.c_str());
 }
 
-void SIBot::rewardAgent(int previousEnemyHP, int previousAlliedHP)
+void SIBot::rewardAgentByQ(int previousEnemyHP, int previousAlliedHP, int currentState)
 {
+	int i = m_stateMaster->getPrevious();
+	int j = m_stateMaster->getPreviousA();
 	int r = (previousEnemyHP - m_stateMaster->getEnemyHP()) - (previousAlliedHP - m_stateMaster->getAlliedHP());
-	m_qTable->updateTable(m_stateMaster->getPrevious(), m_stateMaster->getPreviousA(), r);
+	double oldValue = m_qTable->getValue(i, j);
+	double updateValue = oldValue + 0.9 * (r + 0.8*m_qTable->maxStateValue(currentState) - oldValue);
+	m_qTable->updateTable(i, j, updateValue);
 }
 
 void SIBot::updateAlliedHealth()
@@ -140,4 +144,13 @@ void SIBot::updateAlliedHealth()
 		hp += (*it)->getHitPoints();
 	}
 	m_stateMaster->setAlliedHP(hp);
+}
+
+bool SIBot::readyForAction(BWAPI::Unit* unit)
+{
+	if(!unit->isAttackFrame() && !unit->isMoving() && !unit->isStartingAttack() && !unit->isAttacking())
+	{
+		return true;
+	}
+	return false;
 }
