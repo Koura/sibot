@@ -1,5 +1,7 @@
 #pragma once
 #include "StateMastermind.h"
+#include "QTable.h"
+#include "Policy.h"
 #include <BWAPI.h>
 
 class SIBot : public BWAPI::AIModule
@@ -18,8 +20,14 @@ public:
 	void showPlayers();
 	void showForces();
 	bool analyzed;
+	void updateAlliedHealth();
+
 private:
+	void rewardAgent(int preEnemyHP, int preAlliedHP);
+
 	std::set<BWAPI::Unit*> m_heroes;
 	std::set<BWAPI::Unit*> m_enemies;
 	StateMastermind* m_stateMaster;
+	QTable* m_qTable;
+	Policy m_policy;
 };

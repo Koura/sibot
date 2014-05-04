@@ -12,6 +12,7 @@ StateMastermind::~StateMastermind()
 }
 void StateMastermind::create(int enemyCount)
 {
+	m_previousState = -1;
 	std::ostringstream s;
 	std::string state;
 	for(int i = 0; i <= 1; i++)
@@ -90,8 +91,10 @@ int StateMastermind::weaponCooldown(BWAPI::Unit *hero)
 int StateMastermind::enemiesInRange(BWAPI::Unit *hero, std::set<BWAPI::Unit*> enemies)
 {
 	int n = 0;
+	m_hpEnemies = 0;
 	for(std::set<BWAPI::Unit*>::iterator it = enemies.begin(); it!=enemies.end(); ++it)
 	{ 
+		m_hpEnemies += (*it)->getHitPoints();
 		if(hero->isInWeaponRange(*it))
 		{
 			n++;
@@ -116,4 +119,39 @@ int StateMastermind::currentHealth(BWAPI::Unit *hero)
 		return 3;
 	}
 	return 4;
+}
+
+void StateMastermind::setPrevious(int value)
+{
+	m_previousState = value;
+}
+
+int StateMastermind::getPrevious()
+{
+	return m_previousState;
+}
+
+void StateMastermind::setPreviousA(int a)
+{
+	m_previousAction = a;
+}
+
+int StateMastermind::getPreviousA()
+{
+	return m_previousAction;
+}
+
+int StateMastermind::getEnemyHP()
+{
+	return m_hpEnemies;
+}
+
+int StateMastermind::getAlliedHP()
+{
+	return m_hpAllies;
+}
+
+void StateMastermind::setAlliedHP(int value)
+{
+	m_hpAllies = value;
 }
