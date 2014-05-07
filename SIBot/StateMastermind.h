@@ -2,6 +2,7 @@
 #include <BWAPI.h>
 #include <vector>
 #include <sstream>
+#include <limits>
 
 class StateMastermind
 {
@@ -18,6 +19,7 @@ public:
 	int getEnemyHP();
 	void setAlliedHP(int value);
 	int getAlliedHP();
+	int getStateSize();
 
 private:
 	int weaponCooldown(BWAPI::Unit* hero);

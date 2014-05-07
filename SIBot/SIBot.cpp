@@ -30,7 +30,7 @@ void SIBot::onStart()
 	if(m_qTable!=0)
 	{
 		Broodwar->sendText("Spanish inquisition online for realzorz");
-		m_qTable->initialize(96, 2);
+		m_qTable->initialize(m_stateMaster->getStateSize(), 2);
 	}
 }
 
@@ -40,9 +40,18 @@ SIBot::~SIBot()
 
 void SIBot::onEnd(bool isWinner)
 {
+	if(isWinner)
+	{
+		appendRecords(1);
+	}
+	else
+	{
+		appendRecords(0);
+	}
 	Broodwar->sendText("Spanish inquisition offline for realzorz");
 	m_qTable->shutdown();
 	m_qTable = 0;
+	m_policy.saveConstants();
 	Broodwar->sendText("Qtable saved to qtable.txt...");
 	m_stateMaster->destroy();
 	m_stateMaster = 0;
@@ -51,6 +60,7 @@ void SIBot::onEnd(bool isWinner)
 void SIBot::onFrame()
 {
 	if (Broodwar->isReplay()) return;
+	if(m_enemies.empty()) return;
 	for(std::set<Unit*>::iterator it = m_heroes.begin(); it!=m_heroes.end(); ++it)
 	{
 		if(readyForAction(*it))
@@ -62,7 +72,7 @@ void SIBot::onFrame()
 			if(m_stateMaster->getPrevious()!= -1)
 			{
 				updateAlliedHealth();
-				rewardAgentByQ(previousEnemyHP, previousAlliedHP, currentState);
+				rewardAgentBySarsa(previousEnemyHP, previousAlliedHP, currentState);
 			}
 			else
 			{
@@ -136,6 +146,16 @@ void SIBot::rewardAgentByQ(int previousEnemyHP, int previousAlliedHP, int curren
 	m_qTable->updateTable(i, j, updateValue);
 }
 
+void SIBot::rewardAgentBySarsa(int previousEnemyHP, int previousAlliedHP, int currentState)
+{
+	int i = m_stateMaster->getPrevious();
+	int j = m_stateMaster->getPreviousA();
+	int r = (previousEnemyHP - m_stateMaster->getEnemyHP()) - (previousAlliedHP - m_stateMaster->getAlliedHP());
+	double oldValue = m_qTable->getValue(i, j);
+	int action = m_policy.chooseGreedyAction(currentState, m_qTable);
+	double updateValue = oldValue + 0.9 * (r + 0.8*m_qTable->getValue(currentState, action) - oldValue);
+	m_qTable->updateTable(i, j, updateValue);
+}
 void SIBot::updateAlliedHealth()
 {
 	int hp = 0;
@@ -153,4 +173,11 @@ bool SIBot::readyForAction(BWAPI::Unit* unit)
 		return true;
 	}
 	return false;
+}
+
+void SIBot::appendRecords(int winner)
+{
+	std::ofstream log("results.txt", std::ios_base::app | std::ios_base::out);
+	log << m_policy.getEpisode() << " " << winner << "\n";
+	log.close();
 }

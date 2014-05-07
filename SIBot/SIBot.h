@@ -23,7 +23,9 @@ public:
 	void updateAlliedHealth();
 
 private:
+	void appendRecords(int winner);
 	void rewardAgentByQ(int preEnemyHP, int preAlliedHP, int currentState);
+	void rewardAgentBySarsa(int preEnemyHP, int preAlliedHP, int currentState);
 	bool readyForAction(BWAPI::Unit* unit);
 
 	std::set<BWAPI::Unit*> m_heroes;

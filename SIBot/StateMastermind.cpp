@@ -1,7 +1,7 @@
 #include "StateMastermind.h"
 #include "Action.h"
 #include <algorithm>
-#include <limits>
+
 
 StateMastermind::StateMastermind()
 {
@@ -154,4 +154,9 @@ int StateMastermind::getAlliedHP()
 void StateMastermind::setAlliedHP(int value)
 {
 	m_hpAllies = value;
+}
+
+int StateMastermind::getStateSize()
+{
+	return m_states.size();
 }

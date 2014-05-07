@@ -18,9 +18,9 @@ public:
 	void updateTable(int i, int j, double r);
 
 private:
-	void initializeTable();
+	void initializeTable(int depth, int width);
 	bool saveToFile(std::string name);
-	bool loadFromFile(std::string name);
+	bool loadFromFile(std::string name, int depth);
 	bool is_empty(std::ifstream& file);
 	Eigen::MatrixXd m_matrix;
 };

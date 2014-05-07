@@ -4,7 +4,10 @@
 void Action::fight(BWAPI::Unit* hero, std::set<BWAPI::Unit*> enemies)
 {
 	BWAPI::Unit* target = 0;
-
+	int x1 = hero->getPosition().x();
+	int y1 = hero->getPosition().y();
+	float closest = std::numeric_limits<float>::max();
+	float dist = 0;
 	for(std::set<BWAPI::Unit*>::iterator it = enemies.begin(); it!=enemies.end(); ++it)
 	{ 
 		if(hero->isInWeaponRange(*it))
@@ -19,6 +22,18 @@ void Action::fight(BWAPI::Unit* hero, std::set<BWAPI::Unit*> enemies)
 			else 
 			{
 				target = *it;
+			}
+		}
+		else
+		{
+			if(target==0)
+			{
+			dist = distance(x1, y1, (*it)->getPosition());
+			if(closest > dist)
+				{
+					closest = dist;
+					target = *it;
+				}
 			}
 		}
 	}
@@ -40,6 +55,10 @@ void Action::run(BWAPI::Unit* hero, std::set<BWAPI::Unit*> enemies)
     newPosi.x() = newPosi.x() + dx*30;
 	newPosi.y() = newPosi.y() + dy*30;
 	hero->move(newPosi, false);
+}
+
+void Action::useAbility(BWAPI::Unit* hero)
+{
 }
 
 float Action::distance(BWAPI::Position a, BWAPI::Position b)

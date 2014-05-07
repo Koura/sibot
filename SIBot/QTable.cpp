@@ -10,14 +10,18 @@ QTable::~QTable()
 
 void QTable::initialize(int depth, int width)
 {
-	if(!loadFromFile("qtable.txt"))
+	initializeTable(depth, width);
+	if(!loadFromFile("qtable.txt", depth))
 	{
 		BWAPI::Broodwar->sendText("initialized new table");
-		initializeTable();
 	}
 	else
 	{
-		BWAPI::Broodwar->sendText("File found not empty and opened");
+		if(getRows()!=depth)
+		{
+			initializeTable(depth, width);
+		}
+		BWAPI::Broodwar->sendText("File found, not empty and opened");
 	}
 }
 
@@ -38,14 +42,13 @@ bool QTable::saveToFile(std::string name)
 	return false;
 }
 
-bool QTable::loadFromFile(std::string name)
+bool QTable::loadFromFile(std::string name, int depth)
 {
 	std::ifstream file(name.c_str());
 	if(!is_empty(file))
 	{
 		if(file.is_open())
 		{
-			initializeTable();
 			int i = 0;
 			int j = 0;
 			double d;
@@ -60,8 +63,11 @@ bool QTable::loadFromFile(std::string name)
 					j = 0;
 					i++;
 				}
-				m_matrix(i, j) = d;
-				j++;
+				if(i<depth)
+				{
+					m_matrix(i, j) = d;
+					j++;
+				}
 			}
 			file.close();
 			return true;
@@ -76,9 +82,9 @@ bool QTable::is_empty(std::ifstream& file)
 	return file.peek() == std::ifstream::traits_type::eof();
 }
 
-void QTable::initializeTable()
+void QTable::initializeTable(int depth, int width)
 {
-	m_matrix = Eigen::MatrixXd::Zero(96, 2);
+	m_matrix = Eigen::MatrixXd::Zero(depth, width);
 }
 
 double QTable::getValue(int i, int j)
