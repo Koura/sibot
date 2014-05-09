@@ -24,13 +24,16 @@ public:
 
 private:
 	void appendRecords(int winner);
-	void rewardAgentByQ(int preEnemyHP, int preAlliedHP, int currentState);
-	void rewardAgentBySarsa(int preEnemyHP, int preAlliedHP, int currentState);
-	bool readyForAction(BWAPI::Unit* unit);
+	void rewardAgentByQ(int preEnemyHP, int preAlliedHP, int currentState, bool cd);
+	void rewardAgentBySarsa(int preEnemyHP, int preAlliedHP, int currentState, BWAPI::Unit* hero);
+	bool readyForAction(BWAPI::Unit* unit, int i);
 
 	std::set<BWAPI::Unit*> m_heroes;
 	std::set<BWAPI::Unit*> m_enemies;
 	StateMastermind* m_stateMaster;
 	QTable* m_qTable;
 	Policy m_policy;
+	int frameWait;
+	bool move;
+	std::vector<int> frameWaits;
 };

@@ -92,10 +92,15 @@ double QTable::getValue(int i, int j)
 	return m_matrix(i,j);
 }
 
-int QTable::maxAction(int i)
+int QTable::maxAction(int i, bool cd)
 {
 	int max = 0;
-	for(int j = 1; j < m_matrix.cols(); j++)
+	int until = m_matrix.cols();
+	if(cd) 
+	{
+		until--;
+	}
+	for(int j = 1; j < until; j++)
 	{
 		if(m_matrix(i,max) < m_matrix(i,j))
 		{
@@ -105,12 +110,17 @@ int QTable::maxAction(int i)
 	return max;
 }
 
-double QTable::maxStateValue(int i)
+double QTable::maxStateValue(int i, bool cd)
 {
 	double max = m_matrix(i, 0);
-	for(int j = 1; j < m_matrix.cols(); j++)
+	int until = m_matrix.cols();
+	if(cd)
 	{
-		double currentAction; 
+		until--;
+	}
+	for(int j = 1; j < until; j++)
+	{
+		double currentAction = m_matrix(i, j);
 		if(max < currentAction)
 		{
 			max = currentAction;

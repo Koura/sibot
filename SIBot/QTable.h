@@ -11,8 +11,8 @@ public:
 	void initialize(int depth, int width);
 	void shutdown();
 	double getValue(int i, int j);
-	int maxAction(int i);
-	double maxStateValue(int i);
+	int maxAction(int i, bool cd);
+	double maxStateValue(int i, bool cd);
 	int getColumns();
 	int getRows();
 	void updateTable(int i, int j, double r);

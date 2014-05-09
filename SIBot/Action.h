@@ -10,6 +10,4 @@ public:
 	static void useAbility(BWAPI::Unit* hero);
     static float distance(BWAPI::Position a, BWAPI::Position b);
 	static float distance(int x, int y, BWAPI::Position b);
-private:
-	
 };

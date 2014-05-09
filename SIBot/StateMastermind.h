@@ -23,6 +23,7 @@ public:
 
 private:
 	int weaponCooldown(BWAPI::Unit* hero);
+	int abilityCooldown(BWAPI::Unit* hero);
 	int distanceToClosestEnemy(BWAPI::Unit *hero, std::set<BWAPI::Unit*> enemies);
 	int enemiesInRange(BWAPI::Unit *hero, std::set<BWAPI::Unit*> enemies);
 	int currentHealth(BWAPI::Unit *hero);

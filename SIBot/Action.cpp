@@ -37,9 +37,9 @@ void Action::fight(BWAPI::Unit* hero, std::set<BWAPI::Unit*> enemies)
 			}
 		}
 	}
-	if(target!=0)
+	if(target!=0 && !hero->isAttackFrame() && !hero->isStartingAttack() && !hero->isAttacking())
 	{
-		hero->rightClick(target, false);
+		hero->attack(target, false);
 	}
 }
 
@@ -47,18 +47,19 @@ void Action::run(BWAPI::Unit* hero, std::set<BWAPI::Unit*> enemies)
 {
 	BWAPI::Position newPosi = hero->getPosition();
 	BWAPI::Position enePos = (*enemies.begin())->getPosition();
-    float dist = Action::distance(newPosi, enePos);
+	float dist = Action::distance(newPosi, enePos);
 	float dx = newPosi.x() - enePos.x();
 	float dy = newPosi.y() - enePos.y();
-    dx /= dist;
+	dx /= dist;
 	dy /= dist;
-    newPosi.x() = newPosi.x() + dx*30;
+	newPosi.x() = newPosi.x() + dx*30;
 	newPosi.y() = newPosi.y() + dy*30;
 	hero->move(newPosi, false);
 }
 
 void Action::useAbility(BWAPI::Unit* hero)
 {
+	hero->useTech(BWAPI::TechTypes::Stim_Packs);
 }
 
 float Action::distance(BWAPI::Position a, BWAPI::Position b)

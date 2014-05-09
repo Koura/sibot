@@ -2,6 +2,7 @@
 
 Policy::Policy()
 {
+	srand(time(NULL));
 	if(!loadConstants())
 	{
 		k = 1;
@@ -13,32 +14,36 @@ Policy::~Policy()
 {
 }
 
-int Policy::chooseGreedyAction(int state, QTable* table)
+int Policy::chooseGreedyAction(int state, QTable* table, BWAPI::Unit* hero)
 {
 	int action = 0;
-	srand(time(0));
 	double p = rand()/double(RAND_MAX);
 	if(p < epsilon)
 	{
-		action = chooseRandom(table->getColumns());
+		action = chooseRandom(table->getColumns(), hero);
+		//BWAPI::Broodwar->sendText("RESEARCH");
 	}
 	else
 	{
-		action = table->maxAction(state);
+		action = table->maxAction(state, (hero->getStimTimer()==0));
+		//BWAPI::Broodwar->sendText("EXPLOIT");
 	}
 	return action;
 }
 
-int Policy::chooseRandom(int columns)
+int Policy::chooseRandom(int columns, BWAPI::Unit* hero)
 {
-	srand(time(0));
-	return rand() % columns;
+	if(hero->getStimTimer()==0)
+	{
+		return rand() % columns;
+	}
+	return rand() % (columns-1);
 }
 
 void Policy::saveConstants()
 {
 	k++;
-	epsilon = ((double)epsilon*k)*((double)1/(k+1));
+	epsilon = ((double)epsilon*(k-0.05))*((double)1/(k));
 	std::ofstream file("constants.txt");
 	if(file.is_open())
 	{

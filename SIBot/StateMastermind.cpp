@@ -17,21 +17,28 @@ void StateMastermind::create(int enemyCount)
 	std::string state;
 	for(int i = 0; i <= 1; i++)
 	{
-		for(int j = 1; j <= 4; j++)
+		for(int j = 0; j <=1; j++)
 		{
-			for(int k = 0; k <= enemyCount; k++)
+			for(int k = 1; k <= 4; k++)
 			{
-				for(int l = 1; l <=4; l++)
+				for(int l = 0; l <= enemyCount; l++)
 				{
-					s << i << j <<k << l;
-					state.append(s.str());
-					m_states.push_back(state);
-					s.str(std::string());
-					state.clear();
+					for(int m = 1; m <=4; m++)
+					{
+						s << i << j <<k << l << m;
+						state.append(s.str());
+						m_states.push_back(state);
+						s.str(std::string());
+						state.clear();
+					}
 				}
 			}
 		}
 	}
+	std::stringstream sstr;
+	sstr << m_states.size();
+	std::string str1 = sstr.str();
+	BWAPI::Broodwar->sendText(str1.c_str());
 }
 
 void StateMastermind::destroy()
@@ -43,6 +50,7 @@ int StateMastermind::observe(BWAPI::Unit *hero, std::set<BWAPI::Unit*> enemies)
 {
 	std::stringstream sstr;
 	sstr << weaponCooldown(hero);
+	sstr << abilityCooldown(hero);
 	sstr << distanceToClosestEnemy(hero, enemies);;
 	sstr << enemiesInRange(hero, enemies);
 	sstr << currentHealth(hero);
@@ -88,6 +96,14 @@ int StateMastermind::weaponCooldown(BWAPI::Unit *hero)
 	return 1;
 }
 
+int StateMastermind::abilityCooldown(BWAPI::Unit* hero)
+{
+	if(hero->isStimmed())
+	{
+		return 1;
+	}
+	return 0;
+}
 int StateMastermind::enemiesInRange(BWAPI::Unit *hero, std::set<BWAPI::Unit*> enemies)
 {
 	int n = 0;
